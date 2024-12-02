@@ -1,0 +1,21 @@
+{
+    "maxAttempts": 10,
+    "dryRun": false,
+    "twilio": {
+        "sid": "",
+        "token": "",
+        "from": ""
+    },
+    "participants": {
+        "Alice": "+1234567890",
+        "Bob": "+1234567891",
+        "Charlie": "+1234567892",
+        "David": "+1234567893"
+    },
+    "relationship": {
+        "Alice": ["Bob"],
+        "Bob": ["Alice"],
+        "Charlie": ["David"],
+        "David": ["Charlie"]
+    }
+}
