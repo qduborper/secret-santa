@@ -66,5 +66,5 @@ while (attempts < config.maxAttempts && !success) {
 }
 
 if (!success) {
-    console.log("Failed to send Secret Santa assignments after 10 attempts.")
+    console.log(`Failed to send Secret Santa assignments after ${config.maxAttempts} attempts.`)
 }
