@@ -12,7 +12,7 @@
         "Charlie": "+1234567892",
         "David": "+1234567893"
     },
-    "relationship": {
+    "exclusions": {
         "Alice": ["Bob"],
         "Bob": ["Alice"],
         "Charlie": ["David"],

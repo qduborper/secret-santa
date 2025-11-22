@@ -1,5 +1,8 @@
 import twilio from 'twilio'
-import config from './config.json' assert { type: "json" }
+import { createRequire } from 'module'
+
+const require = createRequire(import.meta.url)
+const config = require('./config.json')
 
 if (!config.twilio?.sid || !config.twilio?.token || !config.twilio?.from) {
     console.error('Please provide Twilio SID, token, and phone number in config.json')
@@ -10,20 +13,20 @@ if (!config.twilio?.sid || !config.twilio?.token || !config.twilio?.from) {
  * Sends Secret Santa assignments via Twilio SMS.
  * 
  * @param {Object} participants - An object where keys are participant names and values are their phone numbers.
- * @param {Object} relationships - An object where keys are participant names and values are arrays of names they should not be assigned to.
+ * @param {Object} exclusions - An object where keys are participant names and values are arrays of names they should not be assigned to.
  * @param {string} twilioSid - Twilio Account SID.
  * @param {string} twilioToken - Twilio Auth Token.
  * @param {string} twilioFrom - Twilio phone number to send messages from.
  * @returns {boolean} True if assignments were sent successfully, false otherwise.
  */
-function secretSanta(participants, relationships, twilioSid, twilioToken, twilioFrom) {
+function secretSanta(participants, exclusions, twilioSid, twilioToken, twilioFrom) {
     const client = new twilio(twilioSid, twilioToken)
     const assignments = {}
     const participantsArray = Object.keys(participants)
     let remaining = [...participantsArray]
 
     for (let giver of participantsArray) {
-        let possibleReceivers = remaining.filter(receiver => receiver !== giver && !(relationships[giver] || []).includes(receiver))
+        let possibleReceivers = remaining.filter(receiver => receiver !== giver && !(exclusions[giver] || []).includes(receiver))
         if (possibleReceivers.length === 0) {
             console.log(`Failed to find a valid assignment for ${giver}.`)
             return false // No valid assignment possible
@@ -61,7 +64,7 @@ let success = false
 
 while (attempts < config.maxAttempts && !success) {
     attempts++
-    success = secretSanta(config.participants, config.relationship, config.twilio.sid, config.twilio.token, config.twilio.from)
+    success = secretSanta(config.participants, config.exclusions, config.twilio.sid, config.twilio.token, config.twilio.from)
     console.log(success ? `Secret Santa assignments sent successfully on attempt ${attempts}.` : `Attempt ${attempts} failed. Retrying...`)
 }
 
